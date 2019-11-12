@@ -1,0 +1,4 @@
+# yay gnu sed :)
+cat sample_table | sed -z 's/\n/\t/g' | sed -e 's/\t/ /g' | sed -e 's/ /, surname\n/g' > tmpkor.csv
+cat sample_list | sed -e 's/ *\[[^[]*\],* */, typically male name syllable\n/g' >> tmpkor.csv
+cat sample_list | sed -e 's/ *([^(]*),* */, typically female name syllable\n/g' | sed -e 's/ *\[[^[]*\],* */, typically female name syllable\n/g' >> tmpkor.csv
