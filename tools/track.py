@@ -21,3 +21,14 @@
 #   opens logfile
 #   writes TIMESTAMP COMMENT in the order specified by flags
 # done
+
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('-l', '--list', help='display last 5 lines of todays file', action='store_true')
+parser.add_argument('-m', '--message_current', help='append newline, date, message', action='store')
+parser.add_argument('-a', '--message_additional', help='append newline, message', action='store')
+parser.add_argument('-p', '--message_previous', help='append message, newline, date', action='store')
+parser.add_argument('-d', '--log_dir', help='set and save log_dir', action='store_true')
+parser.parse_args()
+
+print('hello')
