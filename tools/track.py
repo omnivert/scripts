@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# python >= 3.5
+
 # PLAN
 # format will be 'track [-m "what i'm about to do"] [-p "what i just did"] [-d log_dir] [-l]'
 # no args will just add '\nTIMESTAMP'
@@ -23,12 +25,21 @@
 # done
 
 import argparse
+from pathlib import Path
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--list', help='display last 5 lines of todays file', action='store_true')
-parser.add_argument('-m', '--message_current', help='append newline, date, message', action='store')
-parser.add_argument('-a', '--message_additional', help='append newline, message', action='store')
-parser.add_argument('-p', '--message_previous', help='append message, newline, date', action='store')
+parser.add_argument('-m', '--message_current', help='append newline, date, message')
+parser.add_argument('-a', '--message_additional', help='append newline, message')
+parser.add_argument('-p', '--message_previous', help='append message, newline, date')
 parser.add_argument('-d', '--log_dir', help='set and save log_dir', action='store_true')
 parser.parse_args()
 
+# mkdir -p ~/.config/track
+confdir = Path(Path.home(), '.config', 'track') 
+confdir.mkdir(parents=True, exist_ok=True)
+
+
+
 print('hello')
+
+
