@@ -28,11 +28,14 @@ import argparse
 from pathlib import Path
 from datetime import datetime, timedelta
 parser = argparse.ArgumentParser()
-parser.add_argument('-l', '--list', help='display last 5 lines of todays file', action='store_true')
-parser.add_argument('-m', '--message_current', help='append newline, date, message')
-parser.add_argument('-a', '--message_additional', help='append newline, message')
-parser.add_argument('-p', '--message_previous', help='append message, newline, date')
+#this one's trickier than i thought
+#parser.add_argument('-l', '--list', help='display last 5 lines of todays file', action='store_true')
+parser.add_argument('-m', '--message', help='append message according to flag, default to current')
+parser.add_argument('-c', '--message_current', help='append newline, date, message', action='store_true')
+parser.add_argument('-a', '--message_additional', help='append newline, message', action='store_true')
+parser.add_argument('-p', '--message_previous', help='append message, newline, date', action='store_true')
 parser.add_argument('-d', '--log_dir', help='set and save log_dir')
+parser.add_argument('-b', '--breakpoint', help='set and save file breakpoint (HHMM)')
 args = parser.parse_args()
 
 # mkdir -p ~/.config/track
@@ -43,13 +46,17 @@ trackrc = Path(confdir, 'trackrc')
 trackrc.touch(exist_ok=True)
 
 brkpoint = '0400'
-
 logdir = Path.cwd()
+
 if args.log_dir:
     logdir = Path(args.log_dir)
     if not logdir.is_dir():
         print('please specify a valid log directory')
         exit(1)
+
+if args.breakpoint:
+    brkpoint = args.breakpoint
+    # add some try-catch to check if it's formatted properly
 
 # pull info from trackrc, update if necessary
 # TODO deal with first run case, no args, no trackrc
@@ -80,7 +87,21 @@ logfile.touch(exist_ok=True)
 
 timestamp = now.strftime('%Y-%m-%d_%H%M')
 
-print('hello')
+###### now we actually write things ######
+
+if args.message:
+    with open(str(logfile), 'a') as f:
+        message_string = ''
+        if args.message_current:
+            message_string = '{} {}\n'.format(timestamp, args.message)
+        elif args.message_additional:
+            message_string = '{}\n'.format(args.message)
+        elif args.message_previous:
+            message_string = '{}\n{} '.format(args.message, timestamp)
+        else:
+            message_string = '{} {}\n'.format(timestamp, args.message)
+        f.write(message_string)
+
 print(timestamp)
 
 
