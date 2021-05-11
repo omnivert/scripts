@@ -26,7 +26,7 @@
 
 import argparse
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--list', help='display last 5 lines of todays file', action='store_true')
 parser.add_argument('-m', '--message_current', help='append newline, date, message')
@@ -56,7 +56,7 @@ if args.log_dir:
 with open(str(trackrc), 'r+') as f:
     content = f.read()
     if len(content) > 0:
-        logdir_stored, brkpoint_stored = [x.split(':')[1] for x in content.split('\n')]
+        logdir_stored, brkpoint_stored = [x.split(':')[1] for x in content.split('\n')[:2]]
         if not args.log_dir:
             logdir = logdir_stored
         brkpoint = brkpoint_stored
@@ -66,12 +66,19 @@ with open(str(trackrc), 'r+') as f:
     f.write('logdir:{}\nbreakpoint:{}'.format(logdir, brkpoint))
 
 now = datetime.now()
-timestamp = now.strftime('%Y-%m-%d_%H%M')
 
-filename = 'task_tracker_{}'.format(timestamp[:10])
+filenameformat = 'task_tracker_{}'#.format(timestamp[:10])
 # need to stop and think about this one
-# if now.time() >= datetime.strptime(brkpoint, '%H%M'):
+if now.time() < datetime.strptime(brkpoint, '%H%M').time():
+    filedate = now - timedelta(hours=24)
+else:
+    filedate = now
+filename = filenameformat.format(filedate.strftime('%Y-%m-%d'))
     
+logfile = Path(logdir, filename)
+logfile.touch(exist_ok=True)
+
+timestamp = now.strftime('%Y-%m-%d_%H%M')
 
 print('hello')
 print(timestamp)
